@@ -44,9 +44,11 @@ class MainActivity : AppCompatActivity() {
 
         trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
+            disableButtons()
         }
         falseButton.setOnClickListener { view: View ->
             checkAnswer(false)
+            disableButtons()
         }
         nextButton.setOnClickListener {
             currentIndex = (currentIndex + 1) % questionBank.size
@@ -61,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             currentIndex = (currentIndex + 1) % questionBank.size
             updateQuestion()
         }
-
         updateQuestion()
     }
 
@@ -81,20 +82,37 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         Log.d(TAG, "onDestory is called")
     }
-
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause is called")
+    }
     private fun updateQuestion(){
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
+        enableButtons()
     }
+    var currentScore = 0
     private fun checkAnswer(userAnswer: Boolean){
         val correctAnswer = questionBank[currentIndex].answer
+        if (currentScore == 6 || currentIndex == 6){currentScore = 0}
+        if (currentScore < 6){
+        if (userAnswer == correctAnswer){currentScore += 1}}
 
+        var currentScoreInPercent = currentScore * 100 / 6
         val messageResId = if (userAnswer == correctAnswer){
-            R.string.correct_toast
+            "Your answer is correct! $currentScoreInPercent% of correct answers."
         } else {
-            R.string.incorrect_toast
+            "Your answer is incorrect! $currentScoreInPercent% of correct answers."
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+    }
 
+    private fun disableButtons(){
+        trueButton?.isEnabled = false
+        falseButton?.isEnabled = false
+    }
+    private fun enableButtons(){
+        trueButton?.isEnabled = true
+        falseButton?.isEnabled = true
     }
 }
