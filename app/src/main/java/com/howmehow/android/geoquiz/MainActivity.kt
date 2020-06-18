@@ -21,24 +21,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var previousButton: ImageButton
     private lateinit var questionTextView: TextView
 
-    private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
-    )
-    private var currentIndex = 0
+    private val quizViewModel: QuizViewModel by lazy {
+        ViewModelProviders.of(this).get(QuizViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
         setContentView(R.layout.activity_main)
 
-        val provider: ViewModelProvider = ViewModelProviders.of(this)
-        val quizViewModel = provider.get(QuizViewModel::class.java)
-        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
+//        val provider: ViewModelProvider = ViewModelProviders.of(this)
+//        val quizViewModel = provider.get(QuizViewModel::class.java)
+//        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
 
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
@@ -55,16 +49,15 @@ class MainActivity : AppCompatActivity() {
             disableButtons()
         }
         nextButton.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
         }
         previousButton.setOnClickListener {
-            if (currentIndex > 0){currentIndex = (currentIndex - 1) % questionBank.size}
+            quizViewModel.moveToPrevious()
             updateQuestion()
         }
-
         questionTextView.setOnClickListener{
-            currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
         }
         updateQuestion()
@@ -90,15 +83,16 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         Log.d(TAG, "onPause is called")
     }
+
     private fun updateQuestion(){
-        val questionTextResId = questionBank[currentIndex].textResId
+        val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
         enableButtons()
     }
     var currentScore = 0
     private fun checkAnswer(userAnswer: Boolean){
-        val correctAnswer = questionBank[currentIndex].answer
-        if (currentScore == 6 || currentIndex == 6){currentScore = 0}
+        val correctAnswer = quizViewModel.currentQuestionAnswer
+        if (currentScore == 6){currentScore = 0}
         if (currentScore < 6){
         if (userAnswer == correctAnswer){currentScore += 1}}
 
