@@ -1,5 +1,6 @@
 package com.howmehow.android.geoquiz
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
+private const val REQUEST_CODE_CHEAT = 0
+private const val CHEATER = "cheater"
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,14 +66,27 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
         cheatButton.setOnClickListener {
-            val intent = Intent(this, CheatActivity::class.java)
-            startActivity(intent)
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+//            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE_CHEAT)
         }
         questionTextView.setOnClickListener{
             quizViewModel.moveToNext()
             updateQuestion()
         }
         updateQuestion()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK){
+            return
+        }
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            quizViewModel.isCheater =
+                data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+        }
     }
 
     override fun onStart() {
@@ -94,6 +110,7 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(savedInstanceState)
         Log.i(TAG, "onSaveInstanceState")
         savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
+        savedInstanceState.putBoolean(CHEATER, quizViewModel.isCheater)
     }
     override fun onPause() {
         super.onPause()
@@ -104,20 +121,26 @@ class MainActivity : AppCompatActivity() {
         val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
         enableButtons()
+        quizViewModel.isCheater = false
     }
     var currentScore = 0
+
     private fun checkAnswer(userAnswer: Boolean){
         val correctAnswer = quizViewModel.currentQuestionAnswer
-        if (currentScore == 6){currentScore = 0}
-        if (currentScore < 6){
-        if (userAnswer == correctAnswer){currentScore += 1}}
-
-        var currentScoreInPercent = currentScore * 100 / 6
-        val messageResId = if (userAnswer == correctAnswer){
-            "Your answer is correct! $currentScoreInPercent% of correct answers."
-        } else {
-            "Your answer is incorrect! $currentScoreInPercent% of correct answers."
+//        if (currentScore == 6){currentScore = 0}
+//        if (currentScore < 6){
+//        if (userAnswer == correctAnswer){currentScore += 1}}
+        val messageResId = when {
+            quizViewModel.isCheater -> R.string.judgment_toast
+            userAnswer == correctAnswer -> R.string.correct_toast
+            else -> R.string.incorrect_toast
         }
+//        var currentScoreInPercent = currentScore * 100 / 6
+//        val messageResId = if (userAnswer == correctAnswer){
+//            "Your answer is correct! $currentScoreInPercent% of correct answers."
+//        } else {
+//            "Your answer is incorrect! $currentScoreInPercent% of correct answers."
+//        }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
 
