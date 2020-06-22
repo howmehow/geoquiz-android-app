@@ -4,4 +4,13 @@ Quiz app made in Kotlin, created with Android Programming 4th Edition - The Big 
 
 
 
-<img src="https://user-images.githubusercontent.com/58289892/85276315-7f6b4380-b479-11ea-91e1-2ef9f1d8b8b8.png" width="200"><img src="https://user-images.githubusercontent.com/58289892/85276364-94e06d80-b479-11ea-9693-2f6ba171736f.png" width="200"><img src="https://user-images.githubusercontent.com/58289892/85276482-ca855680-b479-11ea-8cc9-99f4981df014.png" width="200">
+
+<img width="200" alt="Screenshot 2020-06-22 at 11 24 23" src="https://user-images.githubusercontent.com/58289892/85277625-9a3eb780-b47b-11ea-9c7b-e214260495b8.png">
+<img width="200" alt="Screenshot 2020-06-22 at 11 23 46" src="https://user-images.githubusercontent.com/58289892/85277628-9b6fe480-b47b-11ea-8bef-a6b55b6f694d.png">
+<img width="200" alt="Screenshot 2020-06-22 at 11 23 36" src="https://user-images.githubusercontent.com/58289892/85277630-9c087b00-b47b-11ea-82ae-e7b344e47c0e.png">
+<img width="200" alt="Screenshot 2020-06-22 at 11 23 25" src="https://user-images.githubusercontent.com/58289892/85277633-9ca11180-b47b-11ea-9267-f2b93bce700c.png">
+
+
+
+
+
